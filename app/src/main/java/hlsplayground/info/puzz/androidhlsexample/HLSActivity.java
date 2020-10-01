@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
 import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -41,16 +42,25 @@ public class HLSActivity extends AppCompatActivity implements MediaSourceEventLi
 
     private static final String TAG = HLSActivity.class.getSimpleName();
 
-    public static final String HLS_URL = "https://s3-us-west-2.amazonaws.com/hls-playground/hls.m3u8";
+    public static final String HLS_URL = "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8";
     //public static final String HLS_URL = "https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8";
 
 
     ActivityHlsBinding binding;
     private ArrayAdapter<HLSEvent> logsAdapter;
+    private String m3u8URL;
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        binding.exoplayer.getPlayer().stop();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        String url = getIntent().getStringExtra("url");
 
         // For simplicity:
         MediaSourceEventListener eventListener = this;
@@ -58,7 +68,8 @@ public class HLSActivity extends AppCompatActivity implements MediaSourceEventLi
 
         // ----------------------------------------------------------------------------------------------------
 
-        String m3u8File = "hls.m3u8";
+//        String m3u8File = "playlist.m3u8";
+        String m3u8File = "index.m3u8";
         ConnectivityManager connectivity = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = connectivity.getActiveNetworkInfo();
         if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
@@ -68,8 +79,15 @@ public class HLSActivity extends AppCompatActivity implements MediaSourceEventLi
                 m3u8File = "hls_gprs.m3u8";
             }
         }
-        String m3u8URL = "https://s3-us-west-2.amazonaws.com/hls-playground/" + m3u8File;
+//        String m3u8URL = "https://bitdash-a.akamaihd.net/content/sintel/hls/" + m3u8File;
+//        String m3u8URL = "http://3.137.79.26:80/live/helloworld/" + m3u8File;
+        if (url.isEmpty()) {
+            m3u8URL = "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8";
+        } else {
+            m3u8URL = url;
+        }
 
+        Toast.makeText(getApplicationContext(), url + "\n" + m3u8URL, Toast.LENGTH_LONG).show();
         // ----------------------------------------------------------------------------------------------------
 
         // 1. Create a default TrackSelector
