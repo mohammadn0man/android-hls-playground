@@ -5,4 +5,4 @@ Toptal blog: <https://www.toptal.com/apple/introduction-to-http-live-streaming-h
 
 ## input form to enter your custom url
 
-<img align="left" width="100" height="100" src="ss.jpeg">
+<img align="left" src="ss.jpeg">
